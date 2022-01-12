@@ -1,0 +1,12 @@
+{
+  "analysis":{
+    "analyzer":{
+      "default":{
+        "type":"custom",
+        "char_filter": ["html_strip"],
+        "tokenizer": "standard",
+        "filter": ["lowercase", "stop"]
+      }
+    }
+  }
+}

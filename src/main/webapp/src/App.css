@@ -1,0 +1,122 @@
+.App {
+    text-align: center;
+    font-family: "Lucida Console", "Courier New", monospace;
+    /*background-image: url("static/images/background.jpg");*/
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.navbar-brand {
+    padding-top: 0;
+}
+
+.navbar-brand img {
+    max-height: 100%;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spacing {
+    margin-right: 5%;
+}
+
+.Navbar {
+    background-color: #7cb342;
+}
+
+.navbar-login-forms {
+    margin-left: 68%;
+    margin-right: 2%;
+}
+
+.home-header {
+    text-align: left;
+    padding: 18% 5%;
+    font-family: "Yu Gothic UI Semibold";
+}
+
+.form-size {
+    background-image: linear-gradient(45deg, #12cc44, #f5ed7a);
+    opacity: 0.97;
+    margin: 0.5% 30%;
+    padding: 2% 8% 2% 8%;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+}
+
+.form-table {
+    background-image: linear-gradient(45deg, #12cc44, #f5ed7a);
+    opacity: 0.97;
+    margin: 2% 10% 15% 10%;
+    padding: 2% 5%;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+}
+
+.input-margin {
+    margin-top: 10px !important;
+}
+
+.img-margin {
+    margin-left: 5%;
+    max-width: 95%;
+    height: 300px;
+}
+
+.btn {
+    background-color: green !important;
+    color: white !important;
+}
+
+.MuiCard-root {
+    background-image: linear-gradient(45deg, #12cc44, #f5ed7a);
+}
+
+.MuiButton-root {
+    background-color: #22bb33 !important;
+    color: black !important;
+}
+
+.card-view {
+    margin-top: 1%;
+    margin-bottom: 5%;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.card {
+    margin: 3% 3%;
+}
