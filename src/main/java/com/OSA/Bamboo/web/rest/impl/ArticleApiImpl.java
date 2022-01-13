@@ -1,8 +1,6 @@
 package com.OSA.Bamboo.web.rest.impl;
 
-import com.OSA.Bamboo.elastic.ArticleElasticRepo;
 import com.OSA.Bamboo.model.Article;
-import com.OSA.Bamboo.model.elastic.ArticleElastic;
 import com.OSA.Bamboo.service.impl.JpaArticleService;
 import com.OSA.Bamboo.web.converter.ArticleToDto;
 import com.OSA.Bamboo.web.converter.DtoToArticle;
@@ -11,7 +9,6 @@ import com.OSA.Bamboo.web.rest.ArticleApi;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -42,13 +39,6 @@ public class ArticleApiImpl implements ArticleApi {
     public ResponseEntity getAllArticles() throws IOException {
         List<ArticleDto> articles = toDto.convert(articleService.getAll());
         return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity testElasticIndex(ArticleDto dto) throws IOException {
-        Article article = toEntity.convert(dto);
-        assert article != null;
-        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Override

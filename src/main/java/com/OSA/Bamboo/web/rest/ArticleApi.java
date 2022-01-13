@@ -29,10 +29,6 @@ public interface ArticleApi {
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity getAllArticles() throws IOException;
 
-    @PostMapping(value = "/elastic",
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
-    ResponseEntity testElasticIndex(@Valid @RequestBody ArticleDto dto) throws IOException;
-
     @GetMapping(value = "/elastic/{name}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity getElasticArticles(@PathVariable("name") String name) throws IOException;

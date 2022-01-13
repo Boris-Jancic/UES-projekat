@@ -67,7 +67,7 @@ public class OrderApiImpl implements OrderApi {
     }
 
     @Override
-    public ResponseEntity commentsElastic(String comment) {
+    public ResponseEntity getElasticComments(String comment) {
         return new ResponseEntity<>(orderService.getOrderElastic(comment), HttpStatus.OK);
     }
 

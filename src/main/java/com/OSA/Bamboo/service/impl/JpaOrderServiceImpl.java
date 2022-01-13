@@ -3,6 +3,7 @@ package com.OSA.Bamboo.service.impl;
 import com.OSA.Bamboo.elastic.OrderElasticRepo;
 import com.OSA.Bamboo.model.BuyerOrder;
 import com.OSA.Bamboo.model.OrderedArticle;
+import com.OSA.Bamboo.model.elastic.ArticleElastic;
 import com.OSA.Bamboo.model.elastic.OrderElastic;
 import com.OSA.Bamboo.repository.BuyerOrderRepo;
 import com.OSA.Bamboo.repository.OrderedArticleRepo;
@@ -36,14 +37,10 @@ public class JpaOrderServiceImpl implements OrderService {
             );
 
             if (buyerOrder.isAnonymousComment()) {
-                System.out.println("ANONIMAN ANONIMAN");
                 orderElastic.setUser("Anonymous");
             } else {
-                System.out.println("ANONIMAN NIJE ANONIMAN NIJE ");
                 orderElastic.setUser(buyerOrder.getUser());
             }
-            System.out.println(buyerOrder);
-            System.out.println(orderElastic);
 
             orderElasticRepo.save(orderElastic);
         }
@@ -52,7 +49,7 @@ public class JpaOrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderElastic> getOrderElastic(String comment) {
-        return orderElasticRepo.findByComment(comment, PageRequest.of(0, 50)).getContent();
+        return orderElasticRepo.findOrderElasticByComment(comment);
     }
 
     @Override

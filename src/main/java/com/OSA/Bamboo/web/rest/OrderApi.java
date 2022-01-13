@@ -36,7 +36,8 @@ public interface OrderApi {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/elastic/comments/{comment}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    ResponseEntity commentsElastic(@PathVariable("comment") String comment) throws IOException;
+    ResponseEntity getElasticComments(@PathVariable("comment") String comment) throws IOException;
+
 
     @GetMapping(value = "/seller/grade/{username}",
             produces = {MediaType.APPLICATION_JSON_VALUE})

@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
-import static org.springframework.data.elasticsearch.annotations.FieldType.Text;
-
 @Data
 @NoArgsConstructor
 @Document(indexName = "articles")
@@ -17,8 +15,8 @@ public class ArticleElastic {
 
     @Field(type = FieldType.Text)
     private String name;
-                                    
-    @Field(type = Text)
+
+    @Field(type = FieldType.Text)
     private String description;
 
     @Field(type = FieldType.Double)
