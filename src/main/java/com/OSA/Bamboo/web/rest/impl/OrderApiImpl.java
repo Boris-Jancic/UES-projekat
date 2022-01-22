@@ -9,6 +9,7 @@ import com.OSA.Bamboo.web.converter.DtoToBuyerOrder;
 import com.OSA.Bamboo.web.converter.DtoToOrderedArticle;
 import com.OSA.Bamboo.web.dto.BuyerOrderDto;
 import com.OSA.Bamboo.web.dto.OrderedArticleDto;
+import com.OSA.Bamboo.web.elasticConverter.OrderElasticConverter;
 import com.OSA.Bamboo.web.rest.OrderApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

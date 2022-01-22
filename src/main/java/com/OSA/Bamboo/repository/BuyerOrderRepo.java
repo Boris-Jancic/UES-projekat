@@ -1,5 +1,6 @@
 package com.OSA.Bamboo.repository;
 
+import com.OSA.Bamboo.model.Article;
 import com.OSA.Bamboo.model.BuyerOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,6 @@ public interface BuyerOrderRepo extends JpaRepository<BuyerOrder, Long> {
             " IN (SELECT id FROM Article WHERE sellerId" +
             " IN (SELECT id FROM User WHERE username = ?1))) AND bo.delivered = true")
     Optional<Double> sellerGrade(String username);
+
+    BuyerOrder getFirstByOrderByIdDesc();
 }

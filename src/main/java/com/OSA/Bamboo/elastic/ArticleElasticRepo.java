@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface ArticleElasticRepo extends ElasticsearchRepository<ArticleElastic, String> {
-    void deleteByJpaId(Long id);
+    void deleteById(Long id);
 
     Page<ArticleElastic> findByName(String name, Pageable pageable);
 }

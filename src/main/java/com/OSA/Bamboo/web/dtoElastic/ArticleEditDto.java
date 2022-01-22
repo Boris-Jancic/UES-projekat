@@ -1,4 +1,4 @@
-package com.OSA.Bamboo.web.dto;
+package com.OSA.Bamboo.web.dtoElastic;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,15 +8,12 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class ArticleDto {
+public class ArticleEditDto {
 
     private Long id;
 
     @NotBlank(message = "Name is required")
     private String name;
-
-    @NotBlank(message = "Name is required")
-    private String imageBytes;
 
     @NotBlank(message = "Description is required")
     private String description;
@@ -24,6 +21,6 @@ public class ArticleDto {
     @NotNull
     private Double price;
 
-    @NotNull
-    private boolean onDiscount;
+    @NotBlank(message = "Name is required")
+    private String imageName;
 }

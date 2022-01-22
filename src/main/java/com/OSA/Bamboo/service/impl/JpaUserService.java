@@ -60,14 +60,7 @@ public class JpaUserService implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User user = userRepo.findByUsername(username);
-
-        if (user != null) {
-            System.out.println(user);
-            return user;
-        }
-
-        return null;
+        return userRepo.findByUsername(username);
     }
 
     @Override

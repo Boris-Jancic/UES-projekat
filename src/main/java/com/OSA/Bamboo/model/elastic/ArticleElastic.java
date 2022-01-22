@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.*;
 @Setting(settingPath = "/analyzers/serbianAnalyzer.json")
 public class ArticleElastic {
     @Id
-    private String id;
+    private Long id;
 
     @Field(type = FieldType.Text)
     private String name;
@@ -22,13 +22,10 @@ public class ArticleElastic {
     @Field(type = FieldType.Double)
     private Double price;
 
-    @Field(type = FieldType.Long)
-    private Long jpaId;
-
-    public ArticleElastic(String name, String description, Double price, Long id) {
+    public ArticleElastic(Long id, String name, String description, Double price) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.jpaId = id;
     }
 }

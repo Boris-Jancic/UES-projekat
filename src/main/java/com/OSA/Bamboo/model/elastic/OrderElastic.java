@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setting(settingPath = "/analyzers/serbianAnalyzer.json")
 public class OrderElastic {
     @Id
-    private String id;
+    private Long id;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS")
     private LocalDate hourlyRate;
@@ -27,7 +27,8 @@ public class OrderElastic {
     @Field(type = FieldType.Keyword)
     private String user;
 
-    public OrderElastic(LocalDate hourlyRate, int grade, String comment) {
+    public OrderElastic(Long id, LocalDate hourlyRate, int grade, String comment) {
+        this.id = id;
         this.hourlyRate = hourlyRate;
         this.grade = grade;
         this.comment = comment;

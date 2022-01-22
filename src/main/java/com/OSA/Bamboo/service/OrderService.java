@@ -2,7 +2,7 @@ package com.OSA.Bamboo.service;
 
 import com.OSA.Bamboo.model.BuyerOrder;
 import com.OSA.Bamboo.model.OrderedArticle;
-import com.OSA.Bamboo.model.elastic.OrderElastic;
+import com.OSA.Bamboo.web.dtoElastic.OrderElasticDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public interface OrderService {
 
     List<BuyerOrder> getBuyerOrders(String username);
 
-    List<OrderElastic> getOrderElastic(String comment);
+    List<OrderElasticDto> getOrderElastic(String comment);
 
     List<BuyerOrder> getSellerComments(String username);
 

@@ -9,16 +9,12 @@ import com.OSA.Bamboo.repository.DiscountRepo;
 import com.OSA.Bamboo.service.ArticleService;
 import com.OSA.Bamboo.web.converter.ArticleToDto;
 import com.OSA.Bamboo.web.dto.ArticleDto;
+import com.OSA.Bamboo.web.dtoElastic.ArticleElasticDto;
+import com.OSA.Bamboo.web.elasticConverter.ArticleElasticConverter;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,11 +22,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
 public class JpaArticleService implements ArticleService {
@@ -41,16 +36,19 @@ public class JpaArticleService implements ArticleService {
     private ArticleRepo articleRepo;
 
     @Autowired
-    ArticleElasticRepo articleElasticRepo;
+    private ArticleElasticRepo articleElasticRepo;
 
     @Autowired
-    ElasticsearchOperations elasticsearchTemplate;
+    private ElasticsearchOperations elasticsearchTemplate;
 
     @Autowired
     private DiscountRepo discountRepo;
 
     @Autowired
     private ArticleToDto toDto;
+
+    @Autowired
+    private ArticleElasticConverter articleElasticConverter;
 
     @Override
     public List<Article> getAll() {
@@ -66,7 +64,7 @@ public class JpaArticleService implements ArticleService {
             double articlePrice = article.getPrice();
             double discountPrice = 0;
             for (Discount discount : discounts) {
-                if (discount.getArticle().getId() == article.getId()) {
+                if (Objects.equals(discount.getArticle().getId(), article.getId())) {
                     discountPrice = articlePrice - articlePrice * (discount.getDiscountPercent() * 0.01);
                     article.setPrice(discountPrice);
                     article.setOnDiscount(true);
@@ -95,10 +93,10 @@ public class JpaArticleService implements ArticleService {
             Files.write(fileNamePath, imageByte);
             this.articleRepo.save(article);
             ArticleElastic articleElastic = new ArticleElastic(
+                    articleRepo.getFirstByOrderByIdDesc().getId(),
                     article.getName(),
                     article.getDescription(),
-                    article.getPrice(),
-                    articleRepo.getFirstByOrderByIdDesc().getId());
+                    article.getPrice());
             articleElasticRepo.save(articleElastic);
             return article;
         } catch (IOException ex) {
@@ -107,7 +105,21 @@ public class JpaArticleService implements ArticleService {
     }
 
     @Override
-    public Article save(Article article) {
+    public void update(Article article) throws ParseException {
+        Optional<Article> originalArticle = articleRepo.findById(article.getId());
+        if (originalArticle.isPresent()) {
+            Article newArticle = originalArticle.get();
+            newArticle.setName(article.getName());
+            newArticle.setDescription(article.getDescription());
+            newArticle.setPrice(article.getPrice());
+            articleRepo.save(newArticle);
+            articleElasticRepo.save(articleElasticConverter.fromOriginalToElastic(newArticle));
+        }
+    }
+
+    @Override
+    public Article save(Article article) throws ParseException {
+        articleElasticRepo.save(articleElasticConverter.fromOriginalToElastic(article));
         return articleRepo.save(article);
     }
 
@@ -118,7 +130,7 @@ public class JpaArticleService implements ArticleService {
             Article article = articleOptional.get();
             articleRepo.deleteById(id);
             discountRepo.deleteByArticleId(id);
-            articleElasticRepo.deleteByJpaId(id);
+            articleElasticRepo.deleteById(id);
             return article;
         } else {
             return null;
@@ -131,7 +143,15 @@ public class JpaArticleService implements ArticleService {
     }
 
     @Override
-    public List<ArticleElastic> getArticleDocs(String name) {
-        return articleElasticRepo.findByName(name, PageRequest.of(0, 50)).getContent();
+    public List<ArticleElasticDto> getArticleDocs(String name) {
+        System.out.println(
+                articleElasticRepo
+                        .findByName(name, PageRequest.of(0, 50))
+                        .getContent());
+        return articleElasticConverter
+                .listToDto(
+                    articleElasticRepo
+                    .findByName(name, PageRequest.of(0, 50))
+                    .getContent());
     }
 }

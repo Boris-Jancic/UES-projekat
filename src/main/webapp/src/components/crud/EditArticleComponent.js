@@ -11,8 +11,7 @@ export default function EditArticle() {
         name: '',
         description: '',
         price: '',
-        imageName: '',
-        sellerId: ''
+        imageName: ''
     })
     const [hasError, setError] = useState()
     const history = useHistory();

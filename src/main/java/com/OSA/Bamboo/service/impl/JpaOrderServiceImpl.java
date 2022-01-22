@@ -3,13 +3,13 @@ package com.OSA.Bamboo.service.impl;
 import com.OSA.Bamboo.elastic.OrderElasticRepo;
 import com.OSA.Bamboo.model.BuyerOrder;
 import com.OSA.Bamboo.model.OrderedArticle;
-import com.OSA.Bamboo.model.elastic.ArticleElastic;
 import com.OSA.Bamboo.model.elastic.OrderElastic;
 import com.OSA.Bamboo.repository.BuyerOrderRepo;
 import com.OSA.Bamboo.repository.OrderedArticleRepo;
 import com.OSA.Bamboo.service.OrderService;
+import com.OSA.Bamboo.web.dtoElastic.OrderElasticDto;
+import com.OSA.Bamboo.web.elasticConverter.OrderElasticConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,10 +27,14 @@ public class JpaOrderServiceImpl implements OrderService {
     @Autowired
     private OrderElasticRepo orderElasticRepo;
 
+    @Autowired
+    private OrderElasticConverter orderElasticConverter;
+
     @Override
     public BuyerOrder saveBuyerOrder(BuyerOrder buyerOrder) {
         if (buyerOrder.isDelivered()) {
             OrderElastic orderElastic = new OrderElastic(
+                    buyerOrder.getId(),
                     buyerOrder.getHourlyRate(),
                     buyerOrder.getGrade(),
                     buyerOrder.getComment()
@@ -48,8 +52,11 @@ public class JpaOrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderElastic> getOrderElastic(String comment) {
-        return orderElasticRepo.findOrderElasticByComment(comment);
+    public List<OrderElasticDto> getOrderElastic(String comment) {
+        return orderElasticConverter
+                .listToDto(
+                    orderElasticRepo.findOrderElasticByComment(comment)
+                );
     }
 
     @Override

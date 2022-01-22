@@ -1,15 +1,14 @@
 package com.OSA.Bamboo.web.rest;
 
-import com.OSA.Bamboo.web.dto.ArticleDto;
-import com.OSA.Bamboo.web.dto.BuyerDto;
+import com.OSA.Bamboo.web.dtoElastic.ArticleEditDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 @CrossOrigin
@@ -45,7 +44,7 @@ public interface ArticleApi {
     @PutMapping(value = "/update",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    ResponseEntity updateArticle(@Valid @RequestBody ArticleDto article);
+    ResponseEntity updateArticle(@Valid @RequestBody ArticleEditDto article) throws ParseException;
 
     @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping(value = "/delete/{id}")

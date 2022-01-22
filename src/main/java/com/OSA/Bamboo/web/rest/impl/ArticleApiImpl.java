@@ -5,6 +5,8 @@ import com.OSA.Bamboo.service.impl.JpaArticleService;
 import com.OSA.Bamboo.web.converter.ArticleToDto;
 import com.OSA.Bamboo.web.converter.DtoToArticle;
 import com.OSA.Bamboo.web.dto.ArticleDto;
+import com.OSA.Bamboo.web.dtoElastic.ArticleEditDto;
+import com.OSA.Bamboo.web.elasticConverter.ArticleElasticConverter;
 import com.OSA.Bamboo.web.rest.ArticleApi;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @Component
@@ -25,8 +28,12 @@ public class ArticleApiImpl implements ArticleApi {
 
     @Autowired
     private ArticleToDto toDto;
+
     @Autowired
     private DtoToArticle toEntity;
+
+    @Autowired
+    private ArticleElasticConverter articleElasticConverter;
 
     @SneakyThrows
     @Override
@@ -58,11 +65,10 @@ public class ArticleApiImpl implements ArticleApi {
     }
 
     @Override
-    public ResponseEntity updateArticle(ArticleDto dto) {
-        Article article = toEntity.convert(dto);
-        if (article != null) {
-            articleService.save(article);
-            return new ResponseEntity<>("Updated article" + article, HttpStatus.OK);
+    public ResponseEntity updateArticle(ArticleEditDto dto) throws ParseException {
+        if (dto != null) {
+            articleService.update(articleElasticConverter.fromEditToEntity(dto));
+            return new ResponseEntity<>("Updated article" + dto, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
