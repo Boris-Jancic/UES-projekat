@@ -14,11 +14,26 @@ export default function ArticlesElasticTable() {
     }, [])
 
     const fetchElasticArticles = async () => {
-        ArticleService.getElasticArticles(searchParams)
-            .then((response) => response.data)
-            .then(data => {
-                setArticles(data)
-            })
+        const minPrice = localStorage.getItem('minPrice')
+        const maxPrice = localStorage.getItem('maxPrice')
+        if (minPrice || maxPrice) {
+            ArticleService.getArticlesMinMaxPrice(minPrice, maxPrice)
+                .then((response) => response.data)
+                .then(data => {
+                    setArticles(data)
+                    console.log(data)
+                })
+                .then(() => {
+                    localStorage.removeItem("minPrice")
+                    localStorage.removeItem("maxPrice")
+                })
+        } else {
+            ArticleService.getElasticArticles(searchParams)
+                .then((response) => response.data)
+                .then(data => {
+                    setArticles(data)
+                })
+        }
     }
 
     return (
@@ -35,7 +50,6 @@ export default function ArticlesElasticTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-
                             {articles.map(row => (
                                 <TableRow key={row.name}>
                                     <TableCell align={"center"}>{row.id}</TableCell>

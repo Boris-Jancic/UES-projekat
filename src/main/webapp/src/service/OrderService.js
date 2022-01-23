@@ -8,6 +8,7 @@ export const OrderService = {
     addOrder,
     addCartItem,
     putOrder,
+    getOrdersByGrade
 };
 
 async function getOrders(username) {
@@ -32,4 +33,14 @@ async function addCartItem(cartItem) {
 
 async function putOrder(order) {
     return await AxiosClient.put("http://localhost:8080/orders/update", order);
+}
+
+
+async function getOrdersByGrade(minGrade, maxGrade) {
+    return await AxiosClient.get("http://localhost:8080/orders/grade", {
+        params: {
+           min: minGrade,
+           max: maxGrade
+        }
+    });
 }

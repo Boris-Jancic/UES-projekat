@@ -14,13 +14,30 @@ export default function CommentsElasticTable() {
     }, [])
 
     const fetchElasticComments = async () => {
-        OrderService.getElasticOrders(searchParams)
-            .then((response) => response.data)
-            .then(data => {
-                setComments(data)
-            })
+        const minGrade = localStorage.getItem('minGrade')
+        const maxGrade = localStorage.getItem('maxGrade')
+        if (minGrade || maxGrade) {
+            OrderService.getOrdersByGrade(minGrade, maxGrade)
+                .then((response) => response.data)
+                .then(data => {
+                    setComments(data)
+                })
+                .then(() => {
+                    localStorage.removeItem("minGrade")
+                    localStorage.removeItem("maxGrade")
+                })
+
+        } else {
+            OrderService.getElasticOrders(searchParams)
+                .then((response) => response.data)
+                .then(data => {
+                    setComments(data)
+                })
+        }
     }
 
+    console.log(comments)
+    
     return (
         <>
             <div className="form-table">
@@ -38,7 +55,7 @@ export default function CommentsElasticTable() {
 
                             {comments.map(row => (
                                 <TableRow key={row.name}>
-                                    <TableCell align={"center"}>{row.user}</TableCell>
+                                    <TableCell align={"center"}>{row.username}</TableCell>
                                     <TableCell align={"center"}>{row.hourlyRate}</TableCell>
                                     <TableCell align={"center"}>{row.comment}</TableCell>
                                     <TableCell align={"center"}>{row.grade}</TableCell>
