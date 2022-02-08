@@ -4,6 +4,13 @@ import React, {useEffect, useState} from "react";
 import {ArticleService} from "../../service/ArticleService";
 
 export default function ArticlesElasticTable() {
+    const minPrice = localStorage.getItem('minPrice')
+    const maxPrice = localStorage.getItem('maxPrice')
+    const minGrade = localStorage.getItem('minGrade')
+    const maxGrade = localStorage.getItem('maxGrade')
+    const minComments = localStorage.getItem('minComments')
+    const maxComments = localStorage.getItem('maxComments')
+
     const [articles, setArticles] = useState([])
     let params = new URLSearchParams(document.location.search);
     const searchParams = params.get("name");
@@ -14,8 +21,6 @@ export default function ArticlesElasticTable() {
     }, [])
 
     const fetchElasticArticles = async () => {
-        const minPrice = localStorage.getItem('minPrice')
-        const maxPrice = localStorage.getItem('maxPrice')
         if (minPrice || maxPrice) {
             ArticleService.getArticlesMinMaxPrice(minPrice, maxPrice)
                 .then((response) => response.data)
@@ -27,6 +32,29 @@ export default function ArticlesElasticTable() {
                     localStorage.removeItem("minPrice")
                     localStorage.removeItem("maxPrice")
                 })
+        } else if (minGrade || maxGrade) {
+            ArticleService.getArticlesMinMaxGrade(minGrade, minGrade)
+                .then((response) => response.data)
+                .then(data => {
+                    setArticles(data)
+                    console.log(data)
+                })
+                .then(() => {
+                    localStorage.removeItem("minGrade")
+                    localStorage.removeItem("maxGrade")
+                })
+        } else if (minComments || maxComments) {
+            ArticleService.getArticlesMinMaxGrade(minComments, maxComments)
+                .then((response) => response.data)
+                .then(data => {
+                    setArticles(data)
+                    console.log(data)
+                })
+                .then(() => {
+                    localStorage.removeItem("minComments")
+                    localStorage.removeItem("maxComments")
+                })
+
         } else {
             ArticleService.getElasticArticles(searchParams)
                 .then((response) => response.data)

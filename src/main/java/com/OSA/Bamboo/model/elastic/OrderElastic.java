@@ -1,14 +1,14 @@
 package com.OSA.Bamboo.model.elastic;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
+@Builder
 @Document(indexName = "orders")
 @Setting(settingPath = "/analyzers/serbianAnalyzer.json")
 public class OrderElastic {
@@ -25,12 +25,5 @@ public class OrderElastic {
     private String comment;
 
     @Field(type = FieldType.Keyword)
-    private String user;
-
-    public OrderElastic(Long id, LocalDate hourlyRate, int grade, String comment) {
-        this.id = id;
-        this.hourlyRate = hourlyRate;
-        this.grade = grade;
-        this.comment = comment;
-    }
+    private String username;
 }

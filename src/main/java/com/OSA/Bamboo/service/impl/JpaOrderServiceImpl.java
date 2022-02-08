@@ -3,20 +3,34 @@ package com.OSA.Bamboo.service.impl;
 import com.OSA.Bamboo.elastic.OrderElasticRepo;
 import com.OSA.Bamboo.model.BuyerOrder;
 import com.OSA.Bamboo.model.OrderedArticle;
+import com.OSA.Bamboo.model.elastic.ArticleElastic;
 import com.OSA.Bamboo.model.elastic.OrderElastic;
 import com.OSA.Bamboo.repository.BuyerOrderRepo;
 import com.OSA.Bamboo.repository.OrderedArticleRepo;
 import com.OSA.Bamboo.service.OrderService;
 import com.OSA.Bamboo.web.dtoElastic.OrderElasticDto;
+import com.OSA.Bamboo.web.elasticConverter.ArticleElasticConverter;
 import com.OSA.Bamboo.web.elasticConverter.OrderElasticConverter;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
 public class JpaOrderServiceImpl implements OrderService {
+
+    @Autowired
+    private ElasticsearchOperations elasticsearchTemplate;
 
     @Autowired
     private BuyerOrderRepo buyerOrderRepo;
@@ -27,23 +41,20 @@ public class JpaOrderServiceImpl implements OrderService {
     @Autowired
     private OrderElasticRepo orderElasticRepo;
 
-    @Autowired
-    private OrderElasticConverter orderElasticConverter;
-
     @Override
     public BuyerOrder saveBuyerOrder(BuyerOrder buyerOrder) {
         if (buyerOrder.isDelivered()) {
-            OrderElastic orderElastic = new OrderElastic(
-                    buyerOrder.getId(),
-                    buyerOrder.getHourlyRate(),
-                    buyerOrder.getGrade(),
-                    buyerOrder.getComment()
-            );
+            OrderElastic orderElastic = OrderElastic.builder()
+                .hourlyRate(buyerOrder.getHourlyRate())
+                .grade(buyerOrder.getGrade())
+                .comment(buyerOrder.getComment())
+                .username(buyerOrder.getUsername())
+                .build();
 
             if (buyerOrder.isAnonymousComment()) {
-                orderElastic.setUser("Anonymous");
+                orderElastic.setUsername("Anonymous");
             } else {
-                orderElastic.setUser(buyerOrder.getUser());
+                orderElastic.setUsername(buyerOrder.getUsername());
             }
 
             orderElasticRepo.save(orderElastic);
@@ -53,10 +64,12 @@ public class JpaOrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderElasticDto> getOrderElastic(String comment) {
-        return orderElasticConverter
-                .listToDto(
-                    orderElasticRepo.findOrderElasticByComment(comment)
-                );
+      NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()  // PHRASE QUERY EXAMPLE
+                .withQuery(matchPhraseQuery("comment", comment).slop(3))
+                .build();
+        SearchHits<OrderElastic> articlesHit = elasticsearchTemplate.search(searchQuery, OrderElastic.class);
+
+        return OrderElasticConverter.mapDtosFromSearchHit(articlesHit);
     }
 
     @Override
@@ -82,5 +95,10 @@ public class JpaOrderServiceImpl implements OrderService {
     @Override
     public Optional<Double> getSellerGrade(String username) {
         return buyerOrderRepo.sellerGrade(username);
+    }
+
+    @Override
+    public List<BuyerOrder> getOrderByGrade(int min, int max) {
+        return buyerOrderRepo.findBuyerOrderByGradeBetween(min, max);
     }
 }

@@ -1,6 +1,7 @@
 package com.OSA.Bamboo.repository;
 
 import com.OSA.Bamboo.model.Article;
+import com.OSA.Bamboo.model.Buyer;
 import com.OSA.Bamboo.model.BuyerOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BuyerOrderRepo extends JpaRepository<BuyerOrder, Long> {
-    @Query(value = "SELECT bo FROM BuyerOrder bo WHERE bo.user = ?1 AND bo.delivered = false")
+    @Query(value = "SELECT bo FROM BuyerOrder bo WHERE bo.username = ?1 AND bo.delivered = false")
     List<BuyerOrder> findNotDeliveredOrdersByUsername(String username);
 
     @Query(value = "SELECT bo FROM BuyerOrder bo WHERE bo.id" +
@@ -25,4 +26,6 @@ public interface BuyerOrderRepo extends JpaRepository<BuyerOrder, Long> {
     Optional<Double> sellerGrade(String username);
 
     BuyerOrder getFirstByOrderByIdDesc();
+
+    List<BuyerOrder> findBuyerOrderByGradeBetween(int grade, int grade2);
 }

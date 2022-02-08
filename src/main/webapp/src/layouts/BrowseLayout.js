@@ -18,12 +18,6 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-class ImageBackground extends React.Component<{ style: Property.BackgroundImage | string }> {
-    render() {
-        return null;
-    }
-}
-
 export default function BrowseLayout() {
     const classes = useStyles()
     const [article, setArticle] = useState({})

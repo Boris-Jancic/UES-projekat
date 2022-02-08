@@ -26,4 +26,10 @@ public interface ArticleService {
     List<ArticleElasticDto> getArticleDocs(String name);
 
     void update(Article article) throws ParseException;
+
+    List<ArticleDto> getArticlesByPrice(Double min, Double max) throws IOException;
+
+    List<ArticleDto> getArticlesByComment(int min, int max) throws IOException;
+
+    List<ArticleDto> getArticlesByGrade(Double min, Double max) throws IOException;
 }

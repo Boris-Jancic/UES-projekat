@@ -26,7 +26,7 @@ public class DtoToBuyerOrder implements Converter<BuyerOrderDto, BuyerOrder> {
         buyerOrder.setDelivered(dto.isDelivered());
         buyerOrder.setGrade(dto.getGrade());
         buyerOrder.setHourlyRate(LocalDate.now());
-        buyerOrder.setUser(dto.getUsername());
+        buyerOrder.setUsername(dto.getUsername());
 
         return buyerOrder;
     }

@@ -1,11 +1,13 @@
 package com.OSA.Bamboo.model.elastic;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
 @Data
+@Builder
 @NoArgsConstructor
 @Document(indexName = "articles")
 @Setting(settingPath = "/analyzers/serbianAnalyzer.json")

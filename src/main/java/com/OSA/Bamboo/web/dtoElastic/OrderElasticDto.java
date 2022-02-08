@@ -1,10 +1,12 @@
 package com.OSA.Bamboo.web.dtoElastic;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class OrderElasticDto {
     private LocalDate hourlyRate;
 
@@ -12,5 +14,5 @@ public class OrderElasticDto {
 
     private String comment;
 
-    private String user;
+    private String username;
 }

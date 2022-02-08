@@ -10,6 +10,12 @@ export default function SellerLayout() {
     const [sellers, setSellers] = useState([])
     const [minPrice, setMinPrice] = useState(1);
     const [maxPrice, setMaxPrice] = useState(999999);
+
+    const [minGrade, setMinGrade] = useState(1);
+    const [maxGrade, setMaxGrade] = useState(999999);
+
+    const [minComments, setMinComments] = useState(1);
+    const [maxComments, setMaxComments] = useState(999999);
     const [hasError, setError] = useState()
 
     useEffect(() => {
@@ -53,7 +59,20 @@ export default function SellerLayout() {
         window.location.assign("search")
     }
 
-    return (<div className={classes.root} className="card-view">
+    function articleSearchByGrade() {
+        localStorage.setItem("minGrade", minGrade)
+        localStorage.setItem("maxGrade", maxGrade)
+        window.location.assign("search")
+    }
+
+    function articleSearchByComments() {
+        localStorage.setItem("minComments", minComments)
+        localStorage.setItem("maxComments", maxComments)
+        window.location.assign("search")
+    }
+
+    return (
+        <div className={classes.root} className="card-view">
             <Grid
                 container
                 spacing={3}
@@ -61,7 +80,8 @@ export default function SellerLayout() {
                 justify="flex-start"
                 alignItems="flex-start"
             >
-
+                {/*I know this is bad but deadlines are deadlines*/}
+                {/*-----------Price search----------*/}
                 <Grid item xs={12} sm={5} md={3}>
                     <input className="form-control mr-sm-1" type="number" placeholder="Minimum price"
                            onChange={e => setMinPrice(e.target.value)} />
@@ -73,6 +93,36 @@ export default function SellerLayout() {
                     <input className="form-control mr-sm-1" type="number" placeholder="Maximum price"
                            onChange={e => setMaxPrice(e.target.value)} />
                 </Grid>
+                {/*-----------Price search----------*/}
+
+
+                {/*-----------Grade search----------*/}
+                <Grid item xs={12} sm={5} md={3}>
+                    <input className="form-control mr-sm-1" min={1} max={5} type="number" placeholder="Minimum grade"
+                           onChange={e => setMinComments(e.target.value)} />
+                </Grid>
+                <Grid item xs={2} sm={2} md={6}>
+                    <Button className="form-control mr-sm-1" onClick={() => articleSearchByGrade()}>Search</Button>
+                </Grid>
+                <Grid item xs={12} sm={5} md={3}>
+                    <input className="form-control mr-sm-1" min={1} max={5} type="number" placeholder="Maximum grade"
+                           onChange={e => setMaxComments(e.target.value)} />
+                </Grid>
+                {/*-----------Grade search----------*/}
+
+                {/*-----------Comments search----------*/}
+                <Grid item xs={12} sm={5} md={3}>
+                    <input className="form-control mr-sm-1" type="number" placeholder="Minimum comments"
+                           onChange={e => setMinComments(e.target.value)} />
+                </Grid>
+                <Grid item xs={2} sm={2} md={6}>
+                    <Button className="form-control mr-sm-1" onClick={() => articleSearchByComments()}>Search</Button>
+                </Grid>
+                <Grid item xs={12} sm={5} md={3}>
+                    <input className="form-control mr-sm-1" type="number" placeholder="Maximum comments"
+                           onChange={e => setMaxComments(e.target.value)} />
+                </Grid>
+                {/*-----------Comments search----------*/}
 
                 {sellers.map(elem => (
                         <Grid item xs={12} sm={6} md={6} key={sellers.indexOf(elem)}>
@@ -94,7 +144,7 @@ export default function SellerLayout() {
                                         Selling since : {elem.sellingSince}
                                     </Typography>
                                 </CardContent>
-    
+
                                 <CardActions style={{
                                     display: "flex",
                                     justifyContent: "center",

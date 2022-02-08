@@ -11,10 +11,15 @@ import com.OSA.Bamboo.web.converter.ArticleToDto;
 import com.OSA.Bamboo.web.dto.ArticleDto;
 import com.OSA.Bamboo.web.dtoElastic.ArticleElasticDto;
 import com.OSA.Bamboo.web.elasticConverter.ArticleElasticConverter;
+import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.*;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,6 +31,9 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
 public class JpaArticleService implements ArticleService {
@@ -62,7 +70,7 @@ public class JpaArticleService implements ArticleService {
 
         for (ArticleDto article : articlesDto) {
             double articlePrice = article.getPrice();
-            double discountPrice = 0;
+            double discountPrice;
             for (Discount discount : discounts) {
                 if (Objects.equals(discount.getArticle().getId(), article.getId())) {
                     discountPrice = articlePrice - articlePrice * (discount.getDiscountPercent() * 0.01);
@@ -118,6 +126,21 @@ public class JpaArticleService implements ArticleService {
     }
 
     @Override
+    public List<ArticleDto> getArticlesByPrice(Double min, Double max) throws IOException {
+        return toDto.convert(articleRepo.getArticleByPriceBetween(min,max));
+    }
+
+    @Override
+    public List<ArticleDto> getArticlesByGrade(Double min, Double max) throws IOException {
+        return toDto.convert(articleRepo.getArticleByAverageGradeBetween(min,max));
+    }
+
+    @Override
+    public List<ArticleDto> getArticlesByComment(int min, int max) throws IOException {
+        return toDto.convert(articleRepo.getArticleByCommentNumberBetween(min,max));
+    }
+
+    @Override
     public Article save(Article article) throws ParseException {
         articleElasticRepo.save(articleElasticConverter.fromOriginalToElastic(article));
         return articleRepo.save(article);
@@ -144,14 +167,21 @@ public class JpaArticleService implements ArticleService {
 
     @Override
     public List<ArticleElasticDto> getArticleDocs(String name) {
-        System.out.println(
-                articleElasticRepo
-                        .findByName(name, PageRequest.of(0, 50))
-                        .getContent());
-        return articleElasticConverter
-                .listToDto(
-                    articleElasticRepo
-                    .findByName(name, PageRequest.of(0, 50))
-                    .getContent());
+//            NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()    //PHRASE EXAMPLE
+//                    .withQuery(matchPhraseQuery("name", name).slop(1))
+//                    .build();
+//            SearchHits<ArticleElastic> articlesHit = elasticsearchTemplate.search(searchQuery, ArticleElastic.class);
+//            return ArticleElasticConverter.mapDtosFromSearchHit(articlesHit);
+
+            NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(matchQuery("name", name)
+                    .operator(Operator.AND)
+                    .fuzziness(Fuzziness.TWO)
+                    .prefixLength(1))
+                .build();
+
+            SearchHits<ArticleElastic> articlesHit = elasticsearchTemplate.search(searchQuery, ArticleElastic.class);
+
+            return ArticleElasticConverter.mapDtosFromSearchHit(articlesHit);
     }
 }

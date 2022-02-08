@@ -21,4 +21,6 @@ public interface OrderService {
     List<BuyerOrder> getSellerComments(String username);
 
     Optional<Double> getSellerGrade(String username);
+
+    List<BuyerOrder> getOrderByGrade(int min, int max);
 }

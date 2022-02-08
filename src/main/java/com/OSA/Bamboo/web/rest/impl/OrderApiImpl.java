@@ -36,6 +36,9 @@ public class OrderApiImpl implements OrderApi {
     @Autowired
     private BuyerOrderToDto toDtoBo;
 
+    @Autowired
+    private OrderElasticConverter orderElasticConverter;
+
     private Long orderId = 1L;
 
     @Override
@@ -97,5 +100,12 @@ public class OrderApiImpl implements OrderApi {
         if (buyerOrder != null)
             return new ResponseEntity<>(orderService.saveBuyerOrder(buyerOrder), HttpStatus.ACCEPTED);
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public ResponseEntity getOrdersMinMaxGrade(int min, int max) throws IOException {
+        List<BuyerOrderDto> orders = orderElasticConverter.convert(orderService.getOrderByGrade(min, max));
+        System.out.println(orders);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }

@@ -8,7 +8,9 @@ export const ArticleService = {
     editArticle,
     deleteArticle,
     getSellerArticles,
-    getArticlesMinMaxPrice
+    getArticlesMinMaxPrice,
+    getArticlesMinMaxGrade,
+    getArticlesMinMaxComments
 };
 
 async function addArticle(article) {
@@ -44,6 +46,24 @@ async function getArticlesMinMaxPrice(minPrice, maxPrice) {
         params: {
             min: minPrice,
             max: maxPrice,
+        }
+    });
+}
+
+async function getArticlesMinMaxGrade(minGrade, maxGrade) {
+    return await AxiosClient.get("http://localhost:8080/articles/grade", {
+        params: {
+            min: minGrade,
+            max: maxGrade,
+        }
+    });
+}
+
+async function getArticlesMinMaxComments(minComments, maxComments) {
+    return await AxiosClient.get("http://localhost:8080/articles/comments", {
+        params: {
+            min: minComments,
+            max: maxComments,
         }
     });
 }

@@ -22,7 +22,7 @@ public class BuyerOrderToDto implements Converter<BuyerOrder, BuyerOrderDto> {
         dto.setDelivered(buyerOrder.isDelivered());
         dto.setGrade(buyerOrder.getGrade());
         dto.setHourlyRate(buyerOrder.getHourlyRate().toString());
-        dto.setUsername(buyerOrder.getUser());
+        dto.setUsername(buyerOrder.getUsername());
 
         return dto;
     }

@@ -30,9 +30,6 @@ public class ArticleApiImpl implements ArticleApi {
     private ArticleToDto toDto;
 
     @Autowired
-    private DtoToArticle toEntity;
-
-    @Autowired
     private ArticleElasticConverter articleElasticConverter;
 
     @SneakyThrows
@@ -54,9 +51,23 @@ public class ArticleApiImpl implements ArticleApi {
     }
 
     @Override
+    public ResponseEntity getElasticArticlesMinMaxPrice(Double min, Double max) throws IOException {
+        return new ResponseEntity<>(articleService.getArticlesByPrice(min, max), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getElasticArticlesMinMaxComments(int min, int max) throws IOException {
+        return new ResponseEntity<>(articleService.getArticlesByComment(min, max), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getElasticArticlesMinMaxGrade(Double min, Double max) throws IOException {
+        return new ResponseEntity<>(articleService.getArticlesByGrade(min, max), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity getSellerArticles(Long id) throws IOException {
-        List<ArticleDto> articles = articleService.getSellerArticles(id);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
+        return new ResponseEntity<>(articleService.getSellerArticles(id), HttpStatus.OK);
     }
 
     @Override

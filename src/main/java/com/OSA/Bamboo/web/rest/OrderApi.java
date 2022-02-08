@@ -53,4 +53,12 @@ public interface OrderApi {
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity updateOrder(@Valid @RequestBody BuyerOrderDto dto);
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/grade",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity getOrdersMinMaxGrade(
+            @RequestParam(value = "min", defaultValue = "1", required = false) int min,
+            @RequestParam(value = "max", defaultValue = "5", required = false) int max) throws IOException;
+
 }

@@ -29,5 +29,5 @@ public class BuyerOrder {
 
     private boolean archivedComment;
 
-    private String user;
+    private String username;
 }

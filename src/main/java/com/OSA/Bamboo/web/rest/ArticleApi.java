@@ -32,6 +32,27 @@ public interface ArticleApi {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity getElasticArticles(@PathVariable("name") String name) throws IOException;
 
+    @PreAuthorize("hasRole('BUYER')")
+    @GetMapping(value = "/price",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity getElasticArticlesMinMaxPrice(
+            @RequestParam(value = "min", defaultValue = "1.0", required = false) Double min,
+            @RequestParam(value = "max", defaultValue = "999999.0", required = false) Double max) throws IOException;
+
+    @PreAuthorize("hasRole('BUYER')")
+    @GetMapping(value = "/comments",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity getElasticArticlesMinMaxComments(
+            @RequestParam(value = "min", defaultValue = "1", required = false) int min,
+            @RequestParam(value = "max", defaultValue = "100", required = false) int max) throws IOException;
+
+    @PreAuthorize("hasRole('BUYER')")
+    @GetMapping(value = "/grade",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity getElasticArticlesMinMaxGrade(
+            @RequestParam(value = "min", defaultValue = "1.0", required = false) Double min,
+            @RequestParam(value = "max", defaultValue = "999999.0", required = false) Double max) throws IOException;
+
     @GetMapping(value = "/seller/{id}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity getSellerArticles(@PathVariable("id") Long id) throws IOException;
