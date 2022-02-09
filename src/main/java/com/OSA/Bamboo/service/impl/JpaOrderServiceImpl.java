@@ -12,13 +12,16 @@ import com.OSA.Bamboo.web.dtoElastic.OrderElasticDto;
 import com.OSA.Bamboo.web.elasticConverter.ArticleElasticConverter;
 import com.OSA.Bamboo.web.elasticConverter.OrderElasticConverter;
 import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
@@ -40,6 +43,9 @@ public class JpaOrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderElasticRepo orderElasticRepo;
+
+    @Autowired
+    private OrderElasticConverter orderElasticConverter;
 
     @Override
     public BuyerOrder saveBuyerOrder(BuyerOrder buyerOrder) {
@@ -64,12 +70,23 @@ public class JpaOrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderElasticDto> getOrderElastic(String comment) {
-      NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()  // PHRASE QUERY EXAMPLE
-                .withQuery(matchPhraseQuery("comment", comment).slop(3))
-                .build();
-        SearchHits<OrderElastic> articlesHit = elasticsearchTemplate.search(searchQuery, OrderElastic.class);
+//      NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()  // PHRASE QUERY EXAMPLE
+//                .withQuery(matchPhraseQuery("comment", comment).slop(3))
+//                .build();
+//      NativeSearchQuery searchQuery = new NativeSearchQueryBuilder() // FUZZY QUERY EXAMPLE
+//                .withQuery(matchQuery("comment", comment)
+//                    .operator(Operator.AND)
+//                    .fuzziness(Fuzziness.TWO)
+//                    .prefixLength(1))
+//                .build();
+//        SearchHits<OrderElastic> ordersHit = elasticsearchTemplate.search(searchQuery, OrderElastic.class);
+//
+//        return OrderElasticConverter.mapDtosFromSearchHit(ordersHit);
 
-        return OrderElasticConverter.mapDtosFromSearchHit(articlesHit);
+        return orderElasticConverter
+                .listToDto(
+                        orderElasticRepo.findOrderElasticByComment(comment)
+                );
     }
 
     @Override
